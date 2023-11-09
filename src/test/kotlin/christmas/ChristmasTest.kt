@@ -93,7 +93,7 @@ class ChristmasTest {
 
     @ParameterizedTest
     @MethodSource("크리스마스 디데이 할인 여부에 대한 테스트 데이터")
-    fun `1~25일 사이에 방문하면 크리스마스 디데이 할인을 받는다`(date: Int, expected: Boolean) {
+    fun `1~25일 사이에 방문하면 크리스마스 디데이 할인을 받을 수 있다`(date: Int, expected: Boolean) {
         // given
         val case = VisitDate(date)
 
@@ -142,6 +142,30 @@ class ChristmasTest {
         assertThat(result).isEqualTo(expected)
     }
 
+    @ParameterizedTest
+    @MethodSource("특별 할인 여부에 대한 테스트 데이터")
+    fun `이벤트 달력에 별이 있으면 특별 할인을 받을 수 있다`(date: Int, expected: Boolean) {
+        // given
+        val case = VisitDate(date)
+
+        // when
+        val result = BenefitClassifier.availableSpecialDiscount(case)
+
+        // then
+        assertThat(result).isEqualTo(expected)
+    }
+
+    @Test
+    fun `특별 할인을 적용한다`() {
+        // given
+
+        // when
+        val result = BenefitClassifier.discountSpecial()
+
+        // then
+        assertThat(result).isEqualTo(1000)
+    }
+
     companion object {
         @JvmStatic
         fun `크리스마스 디데이 할인 여부에 대한 테스트 데이터`() = listOf(
@@ -172,6 +196,14 @@ class ChristmasTest {
             Arguments.of(1, 2023),
             Arguments.of(5, 2023 * 5),
             Arguments.of(3, 2023 * 3)
+        )
+
+        @JvmStatic
+        fun `특별 할인 여부에 대한 테스트 데이터`() = listOf(
+            Arguments.of(17, true),
+            Arguments.of(25, true),
+            Arguments.of(1, false),
+            Arguments.of(20, false),
         )
     }
 }

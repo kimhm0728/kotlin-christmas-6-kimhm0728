@@ -19,5 +19,9 @@ class BenefitStore(private val visitDate: VisitDate, private val orderMenu: Orde
         } else {
             store[Benefit.WEEKEND] = classifier.discountWeek(orderMenu.menuTypeStore[MenuType.DESSERT]!!)
         }
+
+        if (classifier.availableSpecialDiscount(visitDate)) {
+            store[Benefit.SPECIAL] = classifier.discountSpecial()
+        }
     }
 }
