@@ -6,22 +6,32 @@ import christmas.model.OrderMenu
 import christmas.model.VisitDate
 
 class BenefitStore(private val visitDate: VisitDate, private val orderMenu: OrderMenu) {
-    private val classifier = BenefitClassifier
     val store = mutableMapOf<Benefit, Int>()
 
     fun applyBenefit() {
-        if (classifier.availableChristmasDiscount(visitDate)) {
-            store[Benefit.CHRISTMAS] = classifier.discountChristmas(visitDate)
+        applyDiscount()
+        applyPresent()
+    }
+
+    private fun applyDiscount() {
+        if (DiscountApplier.availableChristmasDiscount(visitDate)) {
+            store[Benefit.CHRISTMAS] = DiscountApplier.discountChristmas(visitDate)
         }
 
-        if (classifier.isWeekend(visitDate)) {
-            store[Benefit.WEEKEND] = classifier.discountWeek(orderMenu.menuTypeStore[MenuType.MAIN]!!)
+        if (DiscountApplier.isWeekend(visitDate)) {
+            store[Benefit.WEEKEND] = DiscountApplier.discountWeek(orderMenu.menuTypeStore[MenuType.MAIN]!!)
         } else {
-            store[Benefit.WEEKEND] = classifier.discountWeek(orderMenu.menuTypeStore[MenuType.DESSERT]!!)
+            store[Benefit.WEEKDAY] = DiscountApplier.discountWeek(orderMenu.menuTypeStore[MenuType.DESSERT]!!)
         }
 
-        if (classifier.availableSpecialDiscount(visitDate)) {
-            store[Benefit.SPECIAL] = classifier.discountSpecial()
+        if (DiscountApplier.availableSpecialDiscount(visitDate)) {
+            store[Benefit.SPECIAL] = DiscountApplier.discountSpecial()
+        }
+    }
+
+    private fun applyPresent() {
+        if (PresentApplier.availablePresent(orderMenu.totalPrice)) {
+            store[Benefit.PRESENT] = PresentApplier.givePresent()
         }
     }
 }

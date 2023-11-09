@@ -6,8 +6,9 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import christmas.constants.Exception
 import christmas.model.OrderMenu
-import christmas.service.BenefitClassifier
+import christmas.service.DiscountApplier
 import christmas.service.OrderMenuGenerator
+import christmas.service.PresentApplier
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.provider.Arguments
@@ -98,7 +99,7 @@ class ChristmasTest {
         val case = VisitDate(date)
 
         // when
-        val result = BenefitClassifier.availableChristmasDiscount(case)
+        val result = DiscountApplier.availableChristmasDiscount(case)
 
         // then
         assertThat(result).isEqualTo(expected)
@@ -111,7 +112,7 @@ class ChristmasTest {
         val case = VisitDate(date)
 
         // when
-        val result = BenefitClassifier.discountChristmas(case)
+        val result = DiscountApplier.discountChristmas(case)
 
         // then
         assertThat(result).isEqualTo(expected)
@@ -124,7 +125,7 @@ class ChristmasTest {
         val case = VisitDate(date)
 
         // when
-        val result = BenefitClassifier.isWeekend(case)
+        val result = DiscountApplier.isWeekend(case)
 
         // then
         assertThat(result).isEqualTo(expected)
@@ -136,7 +137,7 @@ class ChristmasTest {
         // given
 
         // when
-        val result = BenefitClassifier.discountWeek(menuCount)
+        val result = DiscountApplier.discountWeek(menuCount)
 
         // then
         assertThat(result).isEqualTo(expected)
@@ -149,7 +150,7 @@ class ChristmasTest {
         val case = VisitDate(date)
 
         // when
-        val result = BenefitClassifier.availableSpecialDiscount(case)
+        val result = DiscountApplier.availableSpecialDiscount(case)
 
         // then
         assertThat(result).isEqualTo(expected)
@@ -160,10 +161,33 @@ class ChristmasTest {
         // given
 
         // when
-        val result = BenefitClassifier.discountSpecial()
+        val result = DiscountApplier.discountSpecial()
 
         // then
         assertThat(result).isEqualTo(1000)
+    }
+
+    @ParameterizedTest
+    @MethodSource("증정 여부에 대한 테스트 데이터")
+    fun `할인 전 총주문 금액이 12만 원 이상이면 샴페인 1개를 증정한다`(totalPrice: Int, expected: Boolean) {
+        // given
+
+        // when
+        val result = PresentApplier.availablePresent(totalPrice)
+
+        // then
+        assertThat(result).isEqualTo(expected)
+    }
+
+    @Test
+    fun `증정 이벤트를 적용한다`() {
+        // given
+
+        // when
+        val result = PresentApplier.givePresent()
+
+        // then
+        assertThat(result).isEqualTo(120000)
     }
 
     companion object {
@@ -204,6 +228,14 @@ class ChristmasTest {
             Arguments.of(25, true),
             Arguments.of(1, false),
             Arguments.of(20, false),
+        )
+
+        @JvmStatic
+        fun `증정 여부에 대한 테스트 데이터`() = listOf(
+            Arguments.of(120000, true),
+            Arguments.of(300000, true),
+            Arguments.of(50000, false),
+            Arguments.of(15000, false)
         )
     }
 }

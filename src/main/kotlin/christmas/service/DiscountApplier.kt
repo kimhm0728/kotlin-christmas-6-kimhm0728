@@ -17,7 +17,7 @@ private val CHRISTMAS_RANGE = DATE_START..CHRISTMAS_DATE
 
 private const val SPECIAL_DISCOUNT = 1000
 
-object BenefitClassifier {
+object DiscountApplier {
     private val weekendStore = mutableSetOf<Int>()
     private val specialDateStore = mutableSetOf<Int>()
 
