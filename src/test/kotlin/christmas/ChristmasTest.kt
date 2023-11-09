@@ -1,11 +1,13 @@
 package christmas
 
+import christmas.constants.Badge
 import christmas.model.VisitDate
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import christmas.constants.Exception
 import christmas.model.OrderMenu
+import christmas.service.BadgeApplier
 import christmas.service.DiscountApplier
 import christmas.service.OrderMenuGenerator
 import christmas.service.PresentApplier
@@ -190,6 +192,18 @@ class ChristmasTest {
         assertThat(result).isEqualTo(120000)
     }
 
+    @ParameterizedTest
+    @MethodSource("배지 부여에 대한 테스트 데이터")
+    fun `총 혜택 금액에 따라 배지룰 부여한다`(totalBenefitPrice: Int, expected: Badge) {
+        // given
+
+        // when
+        val result = BadgeApplier.getBadge(totalBenefitPrice)
+
+        // then
+        assertThat(result).isEqualTo(expected)
+    }
+
     companion object {
         @JvmStatic
         fun `크리스마스 디데이 할인 여부에 대한 테스트 데이터`() = listOf(
@@ -236,6 +250,14 @@ class ChristmasTest {
             Arguments.of(300000, true),
             Arguments.of(50000, false),
             Arguments.of(15000, false)
+        )
+
+        @JvmStatic
+        fun `배지 부여에 대한 테스트 데이터`() = listOf(
+            Arguments.of(6000, Badge.STAR),
+            Arguments.of(15000, Badge.TREE),
+            Arguments.of(40000, Badge.SANTA),
+            Arguments.of(3000, Badge.NO_BADGE)
         )
     }
 }
