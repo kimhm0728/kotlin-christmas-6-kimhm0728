@@ -12,7 +12,7 @@ object InputValidator {
         }
 
     fun checkOrderMenu(inputOrder: String) =
-        with(Exception.VISIT_ORDER.toString()) {
+        with(Exception.ORDER_MENU.toString()) {
             inputOrder.toOrderMenus().forEach { menus ->
                 validateEmpty(menus, this)
                 validateRegex(menus, this)
