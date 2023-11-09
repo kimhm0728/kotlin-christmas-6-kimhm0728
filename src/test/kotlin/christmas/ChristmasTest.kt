@@ -6,9 +6,12 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import christmas.constants.Exception
 import christmas.model.OrderMenu
+import christmas.service.BenefitClassifier
 import christmas.service.OrderMenuGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 
 class ChristmasTest {
 
@@ -86,5 +89,49 @@ class ChristmasTest {
 
         // then
         assertThat(result).isInstanceOf(OrderMenu::class.java)
+    }
+
+    @ParameterizedTest
+    @MethodSource("크리스마스 디데이 할인 여부에 대한 테스트 데이터")
+    fun `1~25일 사이에 방문하면 크리스마스 디데이 할인을 받는다`(date: Int, expected: Boolean) {
+        // given
+        val case = VisitDate(date)
+
+        // when
+        val result = BenefitClassifier.availableChristmasDiscount(case)
+
+        // then
+        assertThat(result).isEqualTo(expected)
+    }
+
+    @ParameterizedTest
+    @MethodSource("크리스마스 디데이 할인 금액에 대한 테스트 데이터")
+    fun `크리스마스가 다가올 수록 할인 금액이 증가한다`(date: Int, expected: Int) {
+        // given
+        val case = VisitDate(date)
+
+        // when
+        val result = BenefitClassifier.discountChristmas(case)
+
+        // then
+        assertThat(result).isEqualTo(expected)
+    }
+
+    companion object {
+        @JvmStatic
+        fun `크리스마스 디데이 할인 여부에 대한 테스트 데이터`() = listOf(
+            Arguments.of(1, true),
+            Arguments.of(10, true),
+            Arguments.of(25, true),
+            Arguments.of(30, false),
+            Arguments.of(28, false)
+        )
+
+        @JvmStatic
+        fun `크리스마스 디데이 할인 금액에 대한 테스트 데이터`() = listOf(
+            Arguments.of(1, 1000),
+            Arguments.of(25, 3400),
+            Arguments.of(10, 1900)
+        )
     }
 }
