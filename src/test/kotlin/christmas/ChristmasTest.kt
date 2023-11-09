@@ -117,6 +117,31 @@ class ChristmasTest {
         assertThat(result).isEqualTo(expected)
     }
 
+    @ParameterizedTest
+    @MethodSource("주말 여부에 대한 테스트 데이터")
+    fun `방문 날짜가 주말인지 판별한다`(date: Int, expected: Boolean) {
+        // given
+        val case = VisitDate(date)
+
+        // when
+        val result = BenefitClassifier.isWeekend(case)
+
+        // then
+        assertThat(result).isEqualTo(expected)
+    }
+
+    @ParameterizedTest
+    @MethodSource("주중 할인에 대한 테스트 데이터")
+    fun `메뉴의 개수만큼 할인을 적용한다`(menuCount: Int, expected: Int) {
+        // given
+
+        // when
+        val result = BenefitClassifier.discountWeek(menuCount)
+
+        // then
+        assertThat(result).isEqualTo(expected)
+    }
+
     companion object {
         @JvmStatic
         fun `크리스마스 디데이 할인 여부에 대한 테스트 데이터`() = listOf(
@@ -132,6 +157,21 @@ class ChristmasTest {
             Arguments.of(1, 1000),
             Arguments.of(25, 3400),
             Arguments.of(10, 1900)
+        )
+
+        @JvmStatic
+        fun `주말 여부에 대한 테스트 데이터`() = listOf(
+            Arguments.of(1, true),
+            Arguments.of(15, true),
+            Arguments.of(20, false),
+            Arguments.of(6, false)
+        )
+
+        @JvmStatic
+        fun `주중 할인에 대한 테스트 데이터`() = listOf(
+            Arguments.of(1, 2023),
+            Arguments.of(5, 2023 * 5),
+            Arguments.of(3, 2023 * 3)
         )
     }
 }
