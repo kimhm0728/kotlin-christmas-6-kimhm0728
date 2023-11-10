@@ -1,3 +1,6 @@
 package christmas.constants.menu
 
-interface Menu
+interface Menu {
+    val menuName: String
+    val price: Int
+}

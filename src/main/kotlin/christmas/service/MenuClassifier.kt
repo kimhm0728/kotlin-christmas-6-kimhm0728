@@ -7,15 +7,15 @@ object MenuClassifier {
     private val menuPriceStore = mutableMapOf<String, Int>()
 
     init {
-        menuTypeStore.putAll(Appetizer.entries.associate { menu -> menu.menuName to MenuType.APPETIZER })
-        menuTypeStore.putAll(Main.entries.associate { menu -> menu.menuName to MenuType.MAIN })
-        menuTypeStore.putAll(Dessert.entries.associate { menu -> menu.menuName to MenuType.DESSERT })
-        menuTypeStore.putAll(Drink.entries.associate { menu -> menu.menuName to MenuType.DRINK })
+        setMenuStore(enumValues<Appetizer>(), MenuType.APPETIZER)
+        setMenuStore(enumValues<Main>(), MenuType.MAIN)
+        setMenuStore(enumValues<Dessert>(), MenuType.DESSERT)
+        setMenuStore(enumValues<Drink>(), MenuType.DRINK)
+    }
 
-        menuPriceStore.putAll(Appetizer.entries.associate { menu -> menu.menuName to menu.price })
-        menuPriceStore.putAll(Main.entries.associate { menu -> menu.menuName to menu.price })
-        menuPriceStore.putAll(Dessert.entries.associate { menu -> menu.menuName to menu.price })
-        menuPriceStore.putAll(Drink.entries.associate { menu -> menu.menuName to menu.price })
+    private fun setMenuStore(menuItems: Array<out Menu>, menuType: MenuType) {
+        menuTypeStore.putAll(menuItems.associate { menu -> menu.menuName to menuType })
+        menuPriceStore.putAll(menuItems.associate { menu -> menu.menuName to menu.price })
     }
 
     fun getMenuType(menuName: String) = menuTypeStore.getOrDefault(menuName, MenuType.NOTHING)
