@@ -1,21 +1,9 @@
 package christmas.service
 
+import christmas.constants.Constants.CHRISTMAS_DATE
+import christmas.constants.Constants.DATE_START
+import christmas.constants.Range
 import christmas.model.VisitDate
-
-private const val DATE_START = 1
-private const val DATE_END = 31
-private val DATE_RANGE = DATE_START..DATE_END
-
-private const val WEEK = 7
-
-private const val WEEK_DISCOUNT = 2023
-
-private const val CHRISTMAS_DISCOUNT_START = 1000
-private const val CHRISTMAS_DISCOUNT_INTERVAL = 100
-private const val CHRISTMAS_DATE = 25
-private val CHRISTMAS_RANGE = DATE_START..CHRISTMAS_DATE
-
-private const val SPECIAL_DISCOUNT = 1000
 
 object DiscountApplier {
     private val weekendStore = mutableSetOf<Int>()
@@ -26,19 +14,19 @@ object DiscountApplier {
     }
 
     private fun readyDateStore() {
-        for (date in DATE_RANGE step(WEEK)) {
+        for (date in Range.DATE step(WEEK)) {
             weekendStore.add(date)
             weekendStore.add(date + 1)
             specialDateStore.add(date + 2)
         }
-        specialDateStore.add(CHRISTMAS_DATE)
+        specialDateStore.add(CHRISTMAS_DATE.value)
     }
 
     fun availableChristmasDiscount(visitDate: VisitDate) =
-        visitDate.date in CHRISTMAS_RANGE
+        visitDate.date in Range.CHRISTMAS
 
     fun discountChristmas(visitDate: VisitDate) =
-        CHRISTMAS_DISCOUNT_START + (visitDate.date - DATE_START) * CHRISTMAS_DISCOUNT_INTERVAL
+        CHRISTMAS_DISCOUNT_START + (visitDate.date - DATE_START.value) * CHRISTMAS_DISCOUNT_INTERVAL
 
     fun isWeekend(visitDate: VisitDate) =
         weekendStore.contains(visitDate.date)
@@ -50,4 +38,10 @@ object DiscountApplier {
         specialDateStore.contains(visitDate.date)
 
     fun discountSpecial() = SPECIAL_DISCOUNT
+
+    private const val WEEK = 7
+    private const val WEEK_DISCOUNT = 2023
+    private const val CHRISTMAS_DISCOUNT_START = 1000
+    private const val CHRISTMAS_DISCOUNT_INTERVAL = 100
+    private const val SPECIAL_DISCOUNT = 100
 }

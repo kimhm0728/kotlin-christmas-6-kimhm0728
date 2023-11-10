@@ -1,4 +1,4 @@
-package christmas.service
+package christmas.service.applier
 
 import christmas.constants.Badge
 
