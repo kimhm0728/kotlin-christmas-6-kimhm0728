@@ -1,5 +1,6 @@
 package christmas.service
 
+import christmas.constants.Constants.ORDER_SIZE
 import christmas.constants.menu.MenuType
 import christmas.constants.Exception
 import christmas.model.OrderMenu
@@ -20,7 +21,7 @@ class OrderMenuGenerator(inputOrder: String) {
             val menuCount = menu[1].validateAndReturnCount()
             val menuType = MenuClassifier.getMenuType(menuName).also { it.validateType() }
 
-            totalPrice += MenuClassifier.getMenuPrice(menuName)
+            totalPrice += MenuClassifier.getMenuPrice(menuName) * menuCount
             totalCount += menuCount
             menuStore[menuName] = menuStore.getOrDefault(menuName, 0) + menuCount
             menuTypeStore[menuType] = menuTypeStore.getOrDefault(menuType, 0) + menuCount
@@ -35,13 +36,13 @@ class OrderMenuGenerator(inputOrder: String) {
         val count = this.toIntOrNull()
         require(count != null) { Exception.ORDER_MENU }
         require(count > 0) { Exception.ORDER_MENU }
-        require(totalCount + count <= 20) { Exception.ORDER_MENU }
+        require(totalCount + count <= ORDER_SIZE.value) { Exception.ORDER_MENU_MAX_SIZE }
         return count
     }
 
     private fun MenuType.validateType() = require(this != MenuType.NOTHING) { Exception.ORDER_MENU }
 
-    private fun validateDrinkCount() = require(menuTypeStore[MenuType.DRINK] != totalCount) { Exception.ORDER_MENU }
+    private fun validateDrinkCount() = require(menuTypeStore[MenuType.DRINK] != totalCount) { Exception.ORDER_MENU_DRINK_ONLY }
 
     fun createOrderMenu() = OrderMenu(menuStore, menuTypeStore, totalPrice, totalCount)
 }
