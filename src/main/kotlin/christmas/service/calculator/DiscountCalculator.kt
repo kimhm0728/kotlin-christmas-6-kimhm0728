@@ -1,11 +1,11 @@
-package christmas.service
+package christmas.service.calculator
 
 import christmas.constants.Constants.CHRISTMAS_DATE
 import christmas.constants.Constants.DATE_START
 import christmas.constants.Range
 import christmas.model.VisitDate
 
-object DiscountApplier {
+object DiscountCalculator {
     private val weekendStore = mutableSetOf<Int>()
     private val specialDateStore = mutableSetOf<Int>()
 

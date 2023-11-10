@@ -1,9 +1,9 @@
-package christmas.service.applier
+package christmas.service.calculator
 
 import christmas.constants.Constants.PRESENT_PRICE
 import christmas.constants.Constants.PRESENT_STANDARD
 
-object PresentApplier {
+object PresentCalculator {
     fun availablePresent(totalPrice: Int) =
         totalPrice >= PRESENT_STANDARD.value
 

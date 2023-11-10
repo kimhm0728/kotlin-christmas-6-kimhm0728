@@ -1,8 +1,8 @@
-package christmas.service.applier
+package christmas.service.calculator
 
 import christmas.constants.Badge
 
-object BadgeApplier {
+object BadgeCalculator {
     fun getBadge(totalBenefitPrice: Int): Badge {
         Badge.entries.forEach { badge ->
             if (totalBenefitPrice >= badge.minimumPrice) {
