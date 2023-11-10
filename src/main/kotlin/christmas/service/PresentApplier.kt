@@ -1,10 +1,12 @@
 package christmas.service
 
-private const val PRESENT_DISCOUNT = 120000
+import christmas.constants.Constants.PRESENT_PRICE
+
+private const val PRESENT_STANDARD = 120000
 
 object PresentApplier {
     fun availablePresent(totalPrice: Int) =
-        totalPrice >= PRESENT_DISCOUNT
+        totalPrice >= PRESENT_STANDARD
 
-    fun givePresent() = PRESENT_DISCOUNT
+    fun getPresent() = PRESENT_PRICE.value
 }
