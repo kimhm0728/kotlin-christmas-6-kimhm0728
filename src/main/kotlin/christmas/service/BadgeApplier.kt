@@ -5,7 +5,7 @@ import christmas.constants.Badge
 object BadgeApplier {
     fun getBadge(totalBenefitPrice: Int): Badge {
         Badge.entries.forEach { badge ->
-            if (totalBenefitPrice >= badge.minimumCost) {
+            if (totalBenefitPrice >= badge.minimumPrice) {
                 return badge
             }
         }
