@@ -29,8 +29,4 @@ object InputValidator {
         require(orderMenuRegex.matches(input)) { errorMsg }
 
     private fun String.toOrderMenus() = this.split(",")
-
-    private fun String.toMenuAndCount() = this.split("-")
-
-
 }

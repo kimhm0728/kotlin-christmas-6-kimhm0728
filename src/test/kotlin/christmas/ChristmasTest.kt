@@ -1,6 +1,7 @@
 package christmas
 
 import christmas.constants.Badge
+import christmas.constants.Constants
 import christmas.model.VisitDate
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
@@ -186,10 +187,10 @@ class ChristmasTest {
         // given
 
         // when
-        val result = PresentApplier.givePresent()
+        val result = PresentApplier.getPresent()
 
         // then
-        assertThat(result).isEqualTo(120000)
+        assertThat(result).isEqualTo(Constants.PRESENT_PRICE)
     }
 
     @ParameterizedTest

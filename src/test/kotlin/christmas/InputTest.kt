@@ -1,7 +1,6 @@
 package christmas
 
 import christmas.constants.Exception
-import christmas.view.input.InputConverter
 import christmas.view.input.InputValidator
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
