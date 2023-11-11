@@ -16,18 +16,22 @@ object DiscountManager {
 
     fun isWeekend(visitDate: VisitDate) = classifier.isWeekend(visitDate)
 
-    fun getChristmasPrice(visitDate: VisitDate) =
+    fun getChristmasPrice(visitDate: VisitDate): Int {
         if (classifier.isBeforeChristmas(visitDate)) {
-            calculator.getChristmasPrice(visitDate)
-        } else 0
+            return calculator.getChristmasPrice(visitDate)
+        }
+        return 0
+    }
 
     fun getWeekPrice(orderMenu: OrderMenu, menuType: MenuType): Int {
         val menuTypeCount = orderMenu.getMenuTypeCount(menuType)
         return calculator.getWeekPrice(menuTypeCount)
     }
 
-    fun getSpecialPrice(visitDate: VisitDate) =
+    fun getSpecialPrice(visitDate: VisitDate): Int {
         if (classifier.isSpecialDate(visitDate)) {
-            calculator.getSpecialPrice()
-        } else 0
+            return calculator.getSpecialPrice()
+        }
+        return 0
+    }
 }

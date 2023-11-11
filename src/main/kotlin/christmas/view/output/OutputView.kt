@@ -3,28 +3,24 @@ package christmas.view.output
 import christmas.constants.Benefit
 import christmas.constants.Benefit.PRESENT
 import christmas.constants.Print
-import christmas.model.OrderMenu
+import christmas.model.ordermenu.OrderMenu
 import christmas.model.Price
 import christmas.model.badge.BadgeStore
-import christmas.model.BenefitStore
+import christmas.model.benefit.BenefitStore
 import christmas.model.discount.DiscountStore
 import christmas.model.present.PresentStore
 
 object OutputView {
-    fun printStartGreeting() {
-        println("안녕하세요! 우테코 식당 12월 이벤트 플래너입니다.")
-    }
+    fun printStartGreeting() = println("안녕하세요! 우테코 식당 12월 이벤트 플래너입니다.")
 
     fun printEventPreviewInfo() {
-        println("12월 26일에 우테코 식당에서 받을 이벤트 혜택 미리 보기!")
+        println("12월 26일에 우테코 식당에서 받을 이벤트 혜택 미리 보기!\n")
         lineBreak()
     }
 
     fun printOrderMenuItems(orderMenu: OrderMenu) {
         println("<주문 메뉴>")
-        orderMenu.forEach { menu, count ->
-            println("$menu ${count}개")
-        }
+        orderMenu.forEach { menu, count -> printMenuCount(menu, count) }
         lineBreak()
     }
 
@@ -46,8 +42,7 @@ object OutputView {
     private fun printPresentMenu(presentStore: PresentStore) {
         println("<증정 메뉴>")
         if (presentStore.price.isEmpty()) {
-            println(Print.NO_BENEFIT)
-            lineBreak()
+            printNoBenefit()
             return
         }
 
@@ -58,19 +53,29 @@ object OutputView {
     private fun printBenefitHistory(discountStore: DiscountStore, presentStore: PresentStore) {
         println("<혜택 내역>")
         if (discountStore.isEmpty() && presentStore.price.isEmpty()) {
-            println(Print.NO_BENEFIT)
-            lineBreak()
+            printNoBenefit()
             return
         }
 
+        printDiscountBenefit(discountStore)
+        printPresentBenefit(presentStore)
+        lineBreak()
+    }
+
+    private fun printNoBenefit() {
+        println(Print.NO_BENEFIT)
+        lineBreak()
+    }
+
+    private fun printDiscountBenefit(discountStore: DiscountStore) {
         discountStore.forEach { benefit, price ->
             printNegativePriceWithBenefit(benefit, price)
         }
+    }
 
-        if (!presentStore.price.isEmpty()) {
-            printNegativePriceWithBenefit(PRESENT, presentStore.price)
-        }
-        lineBreak()
+    private fun printPresentBenefit(presentStore: PresentStore) {
+        if (presentStore.price.isEmpty()) return
+        printNegativePriceWithBenefit(PRESENT, presentStore.price)
     }
 
     private fun printTotalBenefitPrice(totalBenefitPrice: Price) {
@@ -92,6 +97,7 @@ object OutputView {
         println(badgeStore)
     }
 
+    private fun printMenuCount(menu: String, count: Int) = println("$menu {$count}개")
     private fun printNegativePriceWithBenefit(benefit: Benefit, price: Price) = println("$benefit: -${price}원")
     private fun printNegativePrice(price: Price) = println("-${price}원")
     private fun printPositivePrice(price: Price) = println("${price}원")
