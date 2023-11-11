@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
-class InputTest {
+class ExceptionTest {
     @Test
     fun `방문할 날짜에 아무 값도 입력하지 않으면 예외가 발생한다`() {
         Assertions.assertThatThrownBy { InputValidator.checkVisitDate("") }
