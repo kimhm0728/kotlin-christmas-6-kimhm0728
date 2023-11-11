@@ -1,5 +1,7 @@
-package christmas.model
+package christmas.model.benefit
 
+import christmas.model.ordermenu.OrderMenu
+import christmas.model.VisitDate
 import christmas.model.badge.BadgeStoreBuilder
 import christmas.model.discount.DiscountStoreBuilder
 import christmas.model.present.PresentStoreBuilder

@@ -1,6 +1,7 @@
-package christmas.model
+package christmas.model.ordermenu
 
 import christmas.constants.menu.MenuType
+import christmas.model.Price
 
 class OrderMenu(
     private val menuStore: Map<String, Int>,

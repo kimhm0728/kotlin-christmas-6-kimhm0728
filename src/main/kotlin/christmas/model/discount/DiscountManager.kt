@@ -2,7 +2,7 @@ package christmas.model.discount
 
 import christmas.constants.PriceConstants
 import christmas.constants.menu.MenuType
-import christmas.model.OrderMenu
+import christmas.model.ordermenu.OrderMenu
 import christmas.model.Price
 import christmas.model.VisitDate
 import christmas.service.DateClassifier

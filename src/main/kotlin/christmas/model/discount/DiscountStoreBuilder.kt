@@ -7,7 +7,7 @@ import christmas.constants.Benefit.CHRISTMAS
 import christmas.constants.Benefit
 import christmas.constants.menu.MenuType.MAIN
 import christmas.constants.menu.MenuType.DESSERT
-import christmas.model.OrderMenu
+import christmas.model.ordermenu.OrderMenu
 import christmas.model.Price
 import christmas.model.VisitDate
 

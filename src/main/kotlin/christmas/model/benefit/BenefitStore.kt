@@ -1,4 +1,4 @@
-package christmas.model
+package christmas.model.benefit
 
 import christmas.model.badge.BadgeStore
 import christmas.model.discount.DiscountStore

@@ -1,8 +1,9 @@
-package christmas.model
+package christmas.model.ordermenu
 
 import christmas.constants.Constants.ORDER_MAX_SIZE
 import christmas.constants.menu.MenuType
 import christmas.constants.Exception
+import christmas.model.Price
 import christmas.service.MenuClassifier
 
 class OrderMenuBuilder(inputOrder: String) {
