@@ -4,10 +4,14 @@ import christmas.constants.menu.MenuType
 import christmas.model.VisitDate
 import org.junit.jupiter.params.ParameterizedTest
 import christmas.model.Price
+import christmas.model.benefit.BenefitStoreBuilder
 import christmas.model.discount.DiscountCalculator
 import christmas.model.discount.DiscountManager
+import christmas.model.ordermenu.OrderMenuBuilder
 import christmas.service.DateClassifier
 import christmas.service.MenuClassifier
+import christmas.service.PriceCalculator
+import christmas.utils.convertWithDigitComma
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.provider.Arguments
@@ -125,6 +129,34 @@ class ChristmasTest {
 
         // then
         assertThat(result).isEqualTo(expected)
+    }
+
+    @Test
+    fun `총 혜택 금액을 구한다`() {
+        // given
+        val visitDate = VisitDate(16)
+        val orderMenu = OrderMenuBuilder("시저샐러드-1,바비큐립-1,해산물파스타-2,초코케이크-1").create()
+        val benefitStore = BenefitStoreBuilder.create(visitDate, orderMenu)
+
+        // when
+        val result = PriceCalculator.getTotalBenefitPrice(benefitStore.discountStore, benefitStore.presentStore)
+
+        // then
+        assertThat(result.toString()).isEqualTo(33569.convertWithDigitComma())
+    }
+
+    @Test
+    fun `결제 금액을 구한다`() {
+        // given
+        val visitDate = VisitDate(16)
+        val orderMenu = OrderMenuBuilder("시저샐러드-1,바비큐립-1,해산물파스타-2,초코케이크-1").create()
+        val benefitStore = BenefitStoreBuilder.create(visitDate, orderMenu)
+
+        // when
+        val result = PriceCalculator.getPaymentPrice(benefitStore.discountStore, orderMenu)
+
+        // then
+        assertThat(result.toString()).isEqualTo(138431.convertWithDigitComma())
     }
 
     companion object {
