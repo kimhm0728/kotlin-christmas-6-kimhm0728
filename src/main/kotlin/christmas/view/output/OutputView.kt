@@ -1,10 +1,14 @@
 package christmas.view.output
 
 import christmas.constants.Benefit
+import christmas.constants.Benefit.PRESENT
 import christmas.constants.Print
 import christmas.model.OrderMenu
-import christmas.service.BenefitStore
-import christmas.utils.convertWithDigitComma
+import christmas.model.Price
+import christmas.model.badge.BadgeStore
+import christmas.model.BenefitStore
+import christmas.model.discount.DiscountStore
+import christmas.model.present.PresentStore
 
 object OutputView {
     fun printStartGreeting() {
@@ -16,80 +20,80 @@ object OutputView {
         lineBreak()
     }
 
-    fun printOrderMenus(orderMenu: OrderMenu) {
+    fun printOrderMenuItems(orderMenu: OrderMenu) {
         println("<주문 메뉴>")
-        orderMenu.menuStore.forEach { menu ->
-            println("${menu.key} ${menu.value}개")
+        orderMenu.forEach { menu, count ->
+            println("$menu ${count}개")
         }
         lineBreak()
     }
 
     fun printTotalPriceBeforeDiscount(orderMenu: OrderMenu) {
         println("<할인 전 총주문 금액>")
-        println(orderMenu.totalPrice.convertPositivePriceForm())
+        printPositivePrice(orderMenu.totalPrice)
         lineBreak()
     }
 
-    fun printBenefits(benefitStore: BenefitStore) {
-        printPresentMenu(benefitStore)
-        printBenefitHistory(benefitStore)
-        printTotalBenefitPrice(benefitStore)
-        printPaymentPrice(benefitStore)
-        printEventBadge(benefitStore)
-    }
-
-    private fun printPresentMenu(benefitStore: BenefitStore) {
-        println("<증정 메뉴>")
-        if (benefitStore.get(Benefit.PRESENT) != 0) {
-            println(Print.PRESENT_MENU)
-            lineBreak()
-            return
+    fun printBenefits(benefitStore: BenefitStore, totalBenefitPrice: Price, paymentPrice: Price) =
+        with(benefitStore) {
+            printPresentMenu(presentStore)
+            printBenefitHistory(discountStore, presentStore)
+            printTotalBenefitPrice(totalBenefitPrice)
+            printPaymentPrice(paymentPrice)
+            printEventBadge(badgeStore)
         }
-        println(Print.NO_BENEFIT)
-        lineBreak()
-    }
 
-    private fun printBenefitHistory(benefitStore: BenefitStore) {
-        println("<혜택 내역>")
-        if (benefitStore.isEmpty()) {
+    private fun printPresentMenu(presentStore: PresentStore) {
+        println("<증정 메뉴>")
+        if (presentStore.price.isEmpty()) {
             println(Print.NO_BENEFIT)
             lineBreak()
             return
         }
 
-        benefitStore.forEach { benefit, discount ->
-            println("$benefit: ${discount.convertNegativePriceForm()}")
-        }
+        println(Print.PRESENT_MENU)
         lineBreak()
     }
 
-    private fun printTotalBenefitPrice(benefitStore: BenefitStore) {
-        println("<총혜택 금액>")
-        val totalBenefitPrice = benefitStore.totalBenefitPrice
-
-        if (totalBenefitPrice == 0) {
-            println(totalBenefitPrice.convertPositivePriceForm())
+    private fun printBenefitHistory(discountStore: DiscountStore, presentStore: PresentStore) {
+        println("<혜택 내역>")
+        if (discountStore.isEmpty() && presentStore.price.isEmpty()) {
+            println(Print.NO_BENEFIT)
             lineBreak()
             return
         }
 
-        println(totalBenefitPrice.convertNegativePriceForm())
+        discountStore.forEach { benefit, price ->
+            printNegativePriceWithBenefit(benefit, price)
+        }
+
+        if (!presentStore.price.isEmpty()) {
+            printNegativePriceWithBenefit(PRESENT, presentStore.price)
+        }
         lineBreak()
     }
 
-    private fun printPaymentPrice(benefitStore: BenefitStore) {
+    private fun printTotalBenefitPrice(totalBenefitPrice: Price) {
+        println("<총혜택 금액>")
+        if (totalBenefitPrice.isEmpty()) printPositivePrice(totalBenefitPrice)
+        else printNegativePrice(totalBenefitPrice)
+
+        lineBreak()
+    }
+
+    private fun printPaymentPrice(paymentPrice: Price) {
         println("<할인 후 예상 결제 금액>")
-        println(benefitStore.getPaymentPrice().convertPositivePriceForm())
+        printPositivePrice(paymentPrice)
         lineBreak()
     }
 
-    private fun printEventBadge(benefitStore: BenefitStore) {
+    private fun printEventBadge(badgeStore: BadgeStore) {
         println("<12월 이벤트 배지>")
-        println(benefitStore.badge)
+        println(badgeStore)
     }
 
-    private fun Int.convertPositivePriceForm() = "${this.convertWithDigitComma()}원"
-    private fun Int.convertNegativePriceForm() = "-${this.convertWithDigitComma()}원"
-
+    private fun printNegativePriceWithBenefit(benefit: Benefit, price: Price) = println("$benefit: -${price}원")
+    private fun printNegativePrice(price: Price) = println("-${price}원")
+    private fun printPositivePrice(price: Price) = println("${price}원")
     private fun lineBreak() = println()
 }
