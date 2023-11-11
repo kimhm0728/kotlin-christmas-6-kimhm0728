@@ -3,8 +3,8 @@ package christmas.service
 import christmas.constants.menu.*
 
 object MenuClassifier {
-    private val menuTypeStore = mutableMapOf<String, MenuType>()
-    private val menuPriceStore = mutableMapOf<String, Int>()
+    private val menuTypeStore = mutableMapOf<String, MenuType>() // 메뉴 이름, 메뉴 종류
+    private val menuPriceStore = mutableMapOf<String, Int>() // 메뉴 이름, 메뉴 금액
 
     init {
         setMenuStore(enumValues<Appetizer>(), MenuType.APPETIZER)

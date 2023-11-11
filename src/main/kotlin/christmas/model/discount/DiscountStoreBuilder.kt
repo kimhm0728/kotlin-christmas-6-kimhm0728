@@ -13,7 +13,7 @@ import christmas.model.VisitDate
 
 class DiscountStoreBuilder(private val visitDate: VisitDate, private val orderMenu: OrderMenu) {
     private val manager = DiscountManager
-    private val store = mutableMapOf<Benefit, Price>()
+    private val store = mutableMapOf<Benefit, Price>() // 혜택 종류, 혜택 금액
     private var totalDiscountPrice = Price()
 
     init {
