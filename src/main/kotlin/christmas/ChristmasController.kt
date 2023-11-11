@@ -1,32 +1,43 @@
 package christmas
 
-import christmas.model.OrderMenu
+import christmas.model.benefit.BenefitStoreBuilder
+import christmas.model.ordermenu.OrderMenu
 import christmas.model.VisitDate
-import christmas.service.BenefitStore
-import christmas.service.OrderMenuGenerator
+import christmas.model.ordermenu.OrderMenuBuilder
+import christmas.service.PriceCalculator
 import christmas.utils.retryWhileNoException
 import christmas.view.input.InputView
 import christmas.view.output.OutputView
 
 class ChristmasController {
+    private val visitDate: VisitDate
+    private val orderMenu: OrderMenu
 
-    fun run() {
+    init {
         OutputView.printStartGreeting()
+        visitDate = readyVisitDate()
+        orderMenu = readyOrderMenu()
+    }
 
-        val visitDate = retryWhileNoException { InputView.inputVisitDate() }.run {
-            VisitDate(this.toInt())
-        }
+    private fun readyVisitDate() = retryWhileNoException {
+        val inputDate = InputView.inputVisitDate()
+        VisitDate(inputDate.toInt())
+    }
 
-        val orderMenu = retryWhileNoException {
-            val inputOrder = InputView.inputOrderMenu()
-            OrderMenuGenerator(inputOrder).createOrderMenu()
-        }
+    private fun readyOrderMenu() = retryWhileNoException {
+        val inputOrder = InputView.inputOrderMenu()
+        OrderMenuBuilder(inputOrder).create()
+    }
 
-        OutputView.printEventPreviewInfo()
-        OutputView.printOrderMenus(orderMenu)
-        OutputView.printTotalPriceBeforeDiscount(orderMenu)
+    fun run() = with(OutputView) {
+        printEventPreviewInfo()
+        printOrderMenuItems(orderMenu)
+        printTotalPriceBeforeDiscount(orderMenu)
 
-        val benefitStore = BenefitStore(visitDate, orderMenu)
-        OutputView.printBenefits(benefitStore)
+        val benefitStore = BenefitStoreBuilder.create(visitDate, orderMenu)
+        val totalBenefitPrice = PriceCalculator.getTotalBenefitPrice(benefitStore)
+        val paymentPrice = PriceCalculator.getPaymentPrice(benefitStore, orderMenu)
+
+        printBenefits(benefitStore, totalBenefitPrice, paymentPrice)
     }
 }
