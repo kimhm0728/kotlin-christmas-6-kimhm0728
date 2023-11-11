@@ -1,17 +1,13 @@
 package christmas
 
-import christmas.constants.Badge
-import christmas.constants.Constants
+import christmas.constants.menu.MenuType
 import christmas.model.VisitDate
-import org.assertj.core.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ValueSource
-import christmas.constants.Exception
-import christmas.model.OrderMenu
-import christmas.service.BadgeApplier
-import christmas.service.DiscountApplier
-import christmas.service.OrderMenuGenerator
-import christmas.service.PresentApplier
+import christmas.model.Price
+import christmas.model.discount.DiscountCalculator
+import christmas.model.discount.DiscountManager
+import christmas.service.DateClassifier
+import christmas.service.MenuClassifier
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.provider.Arguments
@@ -20,102 +16,13 @@ import org.junit.jupiter.params.provider.MethodSource
 class ChristmasTest {
 
     @ParameterizedTest
-    @ValueSource(ints = [0, -20, 50])
-    fun `1~31 범위에 벗어나는 VisitDate 객체를 생성하면 예외가 발생한다`(inputDate: Int) {
-        Assertions.assertThatThrownBy { VisitDate(inputDate) }
-            .isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessage(Exception.VISIT_DATE.toString())
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = [1, 10, 30])
-    fun `1~31 범위에 포함되는 VisitDate 객체를 생성하면 예외가 발생하지 않는다`(inputDate: Int) {
-        Assertions.assertThatCode { VisitDate(inputDate) }
-            .doesNotThrowAnyException()
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = ["토마토파스타-10", "해산물파스타-1,제로사이다-2"])
-    fun `메뉴판에 없는 메뉴를 입력하면 예외가 발생한다`(inputOrder: String) {
-        Assertions.assertThatThrownBy { OrderMenuGenerator(inputOrder) }
-            .isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessage(Exception.ORDER_MENU.toString())
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = ["티본스테이크-0", "타파스-50000000000"])
-    fun `메뉴의 개수가 1보다 작거나 Int의 범위를 벗어나면 예외가 발생한다`(inputOrder: String) {
-        Assertions.assertThatThrownBy { OrderMenuGenerator(inputOrder) }
-            .isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessage(Exception.ORDER_MENU.toString())
-    }
-
-    @Test
-    fun `총 메뉴의 개수가 20보다 많으면 예외가 발생한다`() {
-        // given
-        val case = "양송이수프-2,티본스테이크-5,바비큐립-5,제로콜라-10"
-
-        // when, then
-        Assertions.assertThatThrownBy { OrderMenuGenerator(case) }
-            .isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessage(Exception.ORDER_MENU.toString())
-    }
-
-    @Test
-    fun `중복된 메뉴를 주문하면 예외가 발생한다`() {
-        // given
-        val case = "양송이수프-2,티본스테이크-1,양송이수프-1"
-
-        // when, then
-        Assertions.assertThatThrownBy { OrderMenuGenerator(case) }
-            .isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessage(Exception.ORDER_MENU.toString())
-    }
-
-    @Test
-    fun `음료만 주문하면 예외가 발생한다`() {
-        // given
-        val case = "제로콜라-2,샴페인-4"
-
-        // when, then
-        Assertions.assertThatThrownBy { OrderMenuGenerator(case) }
-            .isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessage(Exception.ORDER_MENU.toString())
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = ["양송이수프-1,티본스테이크-2,바비큐립-1,레드와인-1", "제로콜라-10,해산물파스타-10"])
-    fun `요구사항에 맞게 주문하면 예외가 발생하지 않는다`(inputOrder: String) {
-        // given
-
-        // when
-        val result = OrderMenuGenerator(inputOrder).createOrderMenu()
-
-        // then
-        assertThat(result).isInstanceOf(OrderMenu::class.java)
-    }
-
-    @ParameterizedTest
     @MethodSource("크리스마스 디데이 할인 여부에 대한 테스트 데이터")
     fun `1~25일 사이에 방문하면 크리스마스 디데이 할인을 받을 수 있다`(date: Int, expected: Boolean) {
         // given
         val case = VisitDate(date)
 
         // when
-        val result = DiscountApplier.availableChristmasDiscount(case)
-
-        // then
-        assertThat(result).isEqualTo(expected)
-    }
-
-    @ParameterizedTest
-    @MethodSource("크리스마스 디데이 할인 금액에 대한 테스트 데이터")
-    fun `크리스마스가 다가올 수록 할인 금액이 증가한다`(date: Int, expected: Int) {
-        // given
-        val case = VisitDate(date)
-
-        // when
-        val result = DiscountApplier.discountChristmas(case)
+        val result = DateClassifier.isBeforeChristmas(case)
 
         // then
         assertThat(result).isEqualTo(expected)
@@ -128,19 +35,7 @@ class ChristmasTest {
         val case = VisitDate(date)
 
         // when
-        val result = DiscountApplier.isWeekend(case)
-
-        // then
-        assertThat(result).isEqualTo(expected)
-    }
-
-    @ParameterizedTest
-    @MethodSource("주중 할인에 대한 테스트 데이터")
-    fun `메뉴의 개수만큼 할인을 적용한다`(menuCount: Int, expected: Int) {
-        // given
-
-        // when
-        val result = DiscountApplier.discountWeek(menuCount)
+        val result = DateClassifier.isWeekend(case)
 
         // then
         assertThat(result).isEqualTo(expected)
@@ -153,7 +48,32 @@ class ChristmasTest {
         val case = VisitDate(date)
 
         // when
-        val result = DiscountApplier.availableSpecialDiscount(case)
+        val result = DateClassifier.isSpecialDate(case)
+
+        // then
+        assertThat(result).isEqualTo(expected)
+    }
+
+    @ParameterizedTest
+    @MethodSource("크리스마스 디데이 할인 금액에 대한 테스트 데이터")
+    fun `크리스마스가 다가올 수록 할인 금액이 증가한다`(date: Int, expected: Int) {
+        // given
+        val case = VisitDate(date)
+
+        // when
+        val result = DiscountCalculator.getChristmasPrice(case)
+
+        // then
+        assertThat(result).isEqualTo(expected)
+    }
+
+    @ParameterizedTest
+    @MethodSource("주중 할인에 대한 테스트 데이터")
+    fun `메뉴의 개수만큼 할인을 적용한다`(menuCount: Int, expected: Int) {
+        // given
+
+        // when
+        val result = DiscountCalculator.getWeekPrice(menuCount)
 
         // then
         assertThat(result).isEqualTo(expected)
@@ -164,42 +84,44 @@ class ChristmasTest {
         // given
 
         // when
-        val result = DiscountApplier.discountSpecial()
+        val result = DiscountCalculator.getSpecialPrice()
 
         // then
         assertThat(result).isEqualTo(1000)
     }
 
     @ParameterizedTest
-    @MethodSource("증정 여부에 대한 테스트 데이터")
-    fun `할인 전 총주문 금액이 12만 원 이상이면 샴페인 1개를 증정한다`(totalPrice: Int, expected: Boolean) {
+    @MethodSource("이벤트 적용 조건에 대한 테스트 데이터")
+    fun `총 주문 금액 10,000원 이상이면 이벤트를 적용한다`(totalOrderPrice: Int, expected: Boolean) {
         // given
+        val price = Price(totalOrderPrice)
 
         // when
-        val result = PresentApplier.availablePresent(totalPrice)
+        val result = DiscountManager.isDiscount(price)
 
         // then
         assertThat(result).isEqualTo(expected)
     }
 
-    @Test
-    fun `증정 이벤트를 적용한다`() {
+    @ParameterizedTest
+    @MethodSource("메뉴 종류에 대한 테스트 데이터")
+    fun `메뉴의 종류를 구한다`(menu: String, expected: MenuType) {
         // given
 
         // when
-        val result = PresentApplier.getPresent()
+        val result = MenuClassifier.getMenuType(menu)
 
         // then
-        assertThat(result).isEqualTo(Constants.PRESENT_PRICE)
+        assertThat(result).isEqualTo(expected)
     }
 
     @ParameterizedTest
-    @MethodSource("배지 부여에 대한 테스트 데이터")
-    fun `총 혜택 금액에 따라 배지룰 부여한다`(totalBenefitPrice: Int, expected: Badge) {
+    @MethodSource("메뉴 가격에 대한 테스트 데이터")
+    fun `메뉴의 가격을 구한다`(menu: String, expected: Int) {
         // given
 
         // when
-        val result = BadgeApplier.getBadge(totalBenefitPrice)
+        val result = MenuClassifier.getMenuPrice(menu)
 
         // then
         assertThat(result).isEqualTo(expected)
@@ -246,19 +168,26 @@ class ChristmasTest {
         )
 
         @JvmStatic
-        fun `증정 여부에 대한 테스트 데이터`() = listOf(
-            Arguments.of(120000, true),
-            Arguments.of(300000, true),
-            Arguments.of(50000, false),
-            Arguments.of(15000, false)
+        fun `이벤트 적용 조건에 대한 테스트 데이터`() = listOf(
+            Arguments.of(10000, true),
+            Arguments.of(15000, true),
+            Arguments.of(8500, false)
         )
 
         @JvmStatic
-        fun `배지 부여에 대한 테스트 데이터`() = listOf(
-            Arguments.of(6000, Badge.STAR),
-            Arguments.of(15000, Badge.TREE),
-            Arguments.of(40000, Badge.SANTA),
-            Arguments.of(3000, Badge.NO_BADGE)
+        fun `메뉴 종류에 대한 테스트 데이터`() = listOf(
+            Arguments.of("양송이수프", MenuType.APPETIZER),
+            Arguments.of("해산물파스타", MenuType.MAIN),
+            Arguments.of("아이스크림", MenuType.DESSERT),
+            Arguments.of("레드와인", MenuType.DRINK),
+            Arguments.of("알리오올리오", MenuType.NOTHING)
+        )
+
+        @JvmStatic
+        fun `메뉴 가격에 대한 테스트 데이터`() = listOf(
+            Arguments.of("바비큐립", 54000),
+            Arguments.of("초코케이크", 15000),
+            Arguments.of("시저샐러드", 8000),
         )
     }
 }
