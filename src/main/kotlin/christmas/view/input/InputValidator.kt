@@ -5,18 +5,15 @@ import christmas.constants.Exception
 object InputValidator {
     private val orderMenuRegex = "^[가-힣]+-\\d+$".toRegex()
 
-    fun checkVisitDate(inputDate: String) =
-        with(Exception.VISIT_DATE.toString()) {
-            validateEmpty(inputDate, this)
-            validateInt(inputDate, this)
-        }
+    fun checkVisitDate(inputDate: String) {
+        validateEmpty(inputDate, Exception.VISIT_DATE.toString())
+        validateInt(inputDate, Exception.VISIT_DATE.toString())
+    }
 
     fun checkOrderMenu(inputOrder: String) =
-        with(Exception.ORDER_MENU.toString()) {
-            inputOrder.toOrderMenus().forEach { menus ->
-                validateEmpty(menus, this)
-                validateRegex(menus, this)
-            }
+        inputOrder.toOrderMenuItems().forEach { menu ->
+            validateEmpty(menu, Exception.ORDER_MENU.toString())
+            validateRegex(menu, Exception.ORDER_MENU.toString())
         }
 
     private fun validateEmpty(input: String, errorMsg: String) =
@@ -28,5 +25,5 @@ object InputValidator {
     private fun validateRegex(input: String, errorMsg: String) =
         require(orderMenuRegex.matches(input)) { errorMsg }
 
-    private fun String.toOrderMenus() = this.split(",")
+    private fun String.toOrderMenuItems() = this.split(",")
 }
