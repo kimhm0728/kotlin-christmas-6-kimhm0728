@@ -1,7 +1,7 @@
 package christmas.service
 
-import christmas.model.OrderMenu
-import christmas.model.BenefitStore
+import christmas.model.ordermenu.OrderMenu
+import christmas.model.benefit.BenefitStore
 
 object PriceCalculator {
     fun getTotalBenefitPrice(benefitStore: BenefitStore) =
