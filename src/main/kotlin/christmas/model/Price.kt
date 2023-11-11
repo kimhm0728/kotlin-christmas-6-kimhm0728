@@ -2,8 +2,10 @@ package christmas.model
 
 import christmas.utils.convertWithDigitComma
 
-class Price(private var price: Int = 0): Comparable<Price> {
-    fun add(price: Int) { this.price += price }
+class Price(private var price: Int = 0) : Comparable<Price> {
+    fun add(price: Int) {
+        this.price += price
+    }
 
     fun isEmpty() = price == 0
 
