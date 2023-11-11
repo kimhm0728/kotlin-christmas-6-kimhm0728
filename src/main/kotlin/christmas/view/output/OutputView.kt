@@ -97,7 +97,7 @@ object OutputView {
         println(badgeStore)
     }
 
-    private fun printMenuCount(menu: String, count: Int) = println("$menu {$count}개")
+    private fun printMenuCount(menu: String, count: Int) = println("$menu ${count}개")
     private fun printNegativePriceWithBenefit(benefit: Benefit, price: Price) = println("$benefit: -${price}원")
     private fun printNegativePrice(price: Price) = println("-${price}원")
     private fun printPositivePrice(price: Price) = println("${price}원")
