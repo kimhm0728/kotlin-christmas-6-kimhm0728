@@ -13,12 +13,12 @@ class OrderMenuBuilder(inputOrder: String) {
     private var totalCount = 0
 
     init {
-        composeStoreAndValidateMenu(inputOrder.toOrderMenuItems())
+        composeAndValidateMenu(inputOrder.toOrderMenuItems())
     }
 
     private fun String.toOrderMenuItems() = this.split(",").map { menu -> menu.split("-") }
 
-    private fun composeStoreAndValidateMenu(menuItems: List<List<String>>) {
+    private fun composeAndValidateMenu(menuItems: List<List<String>>) {
         menuItems.forEach { menu ->
             val menuName = menu[0].also { it.validateNameDuplication() }
             val menuCount = menu[1].validateAndConvertMenuCount()
