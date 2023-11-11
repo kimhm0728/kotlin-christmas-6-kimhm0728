@@ -1,12 +1,13 @@
 package christmas.service
 
 import christmas.model.ordermenu.OrderMenu
-import christmas.model.benefit.BenefitStore
+import christmas.model.discount.DiscountStore
+import christmas.model.present.PresentStore
 
 object PriceCalculator {
-    fun getTotalBenefitPrice(benefitStore: BenefitStore) =
-        benefitStore.discountStore.totalPrice + benefitStore.presentStore.price
+    fun getTotalBenefitPrice(discountStore: DiscountStore, presentStore: PresentStore) =
+        discountStore.totalPrice + presentStore.price
 
-    fun getPaymentPrice(benefitStore: BenefitStore, orderMenu: OrderMenu) =
-        orderMenu.totalPrice - benefitStore.discountStore.totalPrice
+    fun getPaymentPrice(discountStore: DiscountStore, orderMenu: OrderMenu) =
+        orderMenu.totalPrice - discountStore.totalPrice
 }

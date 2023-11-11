@@ -35,8 +35,9 @@ class ChristmasController {
         printTotalPriceBeforeDiscount(orderMenu)
 
         val benefitStore = BenefitStoreBuilder.create(visitDate, orderMenu)
-        val totalBenefitPrice = PriceCalculator.getTotalBenefitPrice(benefitStore)
-        val paymentPrice = PriceCalculator.getPaymentPrice(benefitStore, orderMenu)
+        val totalBenefitPrice =
+            PriceCalculator.getTotalBenefitPrice(benefitStore.discountStore, benefitStore.presentStore)
+        val paymentPrice = PriceCalculator.getPaymentPrice(benefitStore.discountStore, orderMenu)
 
         printBenefits(benefitStore, totalBenefitPrice, paymentPrice)
     }
